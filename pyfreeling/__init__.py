@@ -1,6 +1,7 @@
 import logging
 from subprocess import check_output, CalledProcessError, Popen, PIPE
-from lxml import etree
+import xmltodict
+import json
 
 version = (0, 1, 1)
 version_string = "PyFreeling version %d.%d.%d" % version
@@ -18,6 +19,9 @@ def find_binary():
     except (CalledProcessError, KeyError):
         return None
 
+def remove_break_lines(text):
+    return text.replace('\n', '').replace('\r', '')
+
 
 class Analyzer(object):
     def __init__(self, *args, **kwargs):
@@ -25,14 +29,16 @@ class Analyzer(object):
         self.lang = kwargs.get('lang', 'en')
         self.timeout = kwargs.get('timeout', 30)
         self.binary = find_binary()
+        self.encoding = kwargs.get('encoding', 'utf-8')
 
     def run(self, input, *args, **kwargs):
         cmd = self._build_cmd(*args, **kwargs)
         logger.debug(cmd)
         proc = Popen(cmd, stdin=PIPE, stdout=PIPE)
-        outs, errs = proc.communicate(input)
+        outs, errs = proc.communicate(input.encode(self.encoding))
         if errs is None:
-            return etree.XML("<sentences>{}</sentences>".format(outs))
+            result = remove_break_lines(outs.decode(self.encoding))
+            return json.dumps(xmltodict.parse(("<sentences>{}</sentences>".format(result))))
         else:
             raise Exception(errs)
 

@@ -4,7 +4,7 @@ from .. import find_binary, Analyzer
 
 class FindBinaryTestCase(unittest.TestCase):
     def test_find_binary(self):
-        self.assertTrue(find_binary().endswith('analyze'))
+        self.assertTrue(find_binary().endswith(b'analyze'))
 
 
 class AnalyzeTestCase(unittest.TestCase):
@@ -22,7 +22,9 @@ class AnalyzeTestCase(unittest.TestCase):
         self.assertEqual(
             cmd[1:],
             [
-                '-f', 'config.cfg', '--noflush',
-                '--lang', 'en', '--output', 'json'
+                '-f', 'config.cfg', 
+                '--noflush',
+                '--lang', 'en', 
+                '--output', 'xml'
             ]
         )

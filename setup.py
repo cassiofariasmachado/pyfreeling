@@ -1,9 +1,8 @@
 from setuptools import setup
 from pyfreeling import version
 
-install_requires = ['lxml']
+install_requires = ['lxml', 'xmltodict']
 version = '.'.join([str(x) for x in version])
-
 
 setup(
     name='pyfreeling',
